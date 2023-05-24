@@ -154,7 +154,7 @@ export default function Home() {
                       fontFamily: "Righteous",
                     }}
                   >
-                    {score <= 0 ? (
+                    {score <= 5 ? (
                       <>
                         <Typography sx={{ color: "red" }}>Failed!</Typography>
                         <Typography sx={{ color: "blue" }}>
