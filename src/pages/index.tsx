@@ -1,12 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import { Container, Typography, Button, Paper } from "@mui/material";
+import { Container, Typography, Button, Paper, Box } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
 import { theme } from "../styles/themeProvider";
 import QuestionsCard from "@/components/questionsCard";
 import { fetchQuizQuestion } from "@/components/api/api";
 import { QuestionState, Difficulty } from "@/components/api/api";
+import TakeQuiz from "@/components/takeCuiz";
 
 export type AnswerObject = {
   question: string;
@@ -101,9 +102,9 @@ export default function Home(targetDate: string | number | Date) {
         >
           <Typography
             sx={{
-              fontSize: "40px",
+              fontSize: "35px",
               fontWeight: "bold",
-              marginBottom: "20px",
+              marginBottom: "10px",
               marginTop: "20px",
               fontFamily: "Righteous",
             }}
@@ -118,19 +119,27 @@ export default function Home(targetDate: string | number | Date) {
 
           {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
             <>
-              <Button
-                color="primary"
+              {/* Answer questions carefully before going to the 'Next Question', */}
+              <Box
                 sx={{
-                  background: "#0000FF",
-                  width: "100px",
-                  "&:hover": {
-                    background: "green",
-                  },
+                  textAlign: "center",
                 }}
-                onClick={startTrivia}
               >
-                Start
-              </Button>
+                <TakeQuiz />
+
+                <Button
+                  color="primary"
+                  sx={{
+                    background: "#0000FF",
+                    "&:hover": {
+                      background: "green",
+                    },
+                  }}
+                  onClick={startTrivia}
+                >
+                  {gameOver ? "Start" : "Start Again"}
+                </Button>
+              </Box>
             </>
           ) : null}
 
@@ -168,7 +177,7 @@ export default function Home(targetDate: string | number | Date) {
                   textAlign: "center",
                   paddingX: "30px",
                   paddingY: "30px",
-                  marginTop: "50px",
+                  marginTop: "20px",
                 }}
               >
                 {!gameOver && userAnswers.length === TOTAL_QUESTIONS ? (
