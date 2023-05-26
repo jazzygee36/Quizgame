@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Container, Typography, Button, Paper } from "@mui/material";
 import { ThemeProvider } from "@mui/material";
@@ -7,7 +7,8 @@ import { theme } from "../styles/themeProvider";
 import QuestionsCard from "@/components/questionsCard";
 import { fetchQuizQuestion } from "@/components/api/api";
 import { QuestionState, Difficulty } from "@/components/api/api";
-import { useStyles } from "../styles/useStyles";
+import Timer from "@/components/services/timer";
+// import { Difficulty } from "@/components/api/api";
 
 export type AnswerObject = {
   question: string;
@@ -15,43 +16,63 @@ export type AnswerObject = {
   correct: boolean;
   correctAnswer: string;
 };
+
 const TOTAL_QUESTIONS = 10;
-export default function Home() {
-  const classes = useStyles();
+// console.log(fetchQuizQuestion(TOTAL_QUESTIONS, Difficulty.EASY));
+
+export default function Home(targetDate: string | number | Date) {
   const [loading, setLoading] = useState(false);
   const [questions, setQuestions] = useState<QuestionState[]>([]);
   const [number, setNumber] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(true);
+  // const [timer, setTimer] = useState(60);
+
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     setTimer((prev) => prev - 1);
+  //     if (timer === 0) {
+  //       setTimer(timer);
+  //     }
+  //   }, 1000);
+  // });
 
   const startTrivia = async () => {
-    setLoading(true);
-    setGameOver(false);
+    try {
+      setLoading(true);
+      setGameOver(false);
 
-    const newQuestions = await fetchQuizQuestion(
-      TOTAL_QUESTIONS,
-      Difficulty.EASY
-    );
+      const newQuestions = await fetchQuizQuestion(
+        TOTAL_QUESTIONS,
+        Difficulty.EASY
+      );
 
-    setQuestions(newQuestions);
-    setScore(0);
-    setUserAnswers([]);
-    setNumber(0);
-    setLoading(false);
+      setQuestions(newQuestions);
+      setScore(0);
+      setUserAnswers([]);
+      setNumber(0);
+      setLoading(false);
+    } catch (err) {
+      return { message: "an error " };
+    }
   };
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!gameOver) {
-      const answer = e.currentTarget.value;
-      const correct = questions[number].correct_answer === answer;
-      if (correct) setScore((prev) => prev + 1);
-      const answerObject = {
-        question: questions[number].question,
-        answer,
-        correct,
-        correctAnswer: questions[number].correct_answer,
-      };
-      setUserAnswers((prev) => [...prev, answerObject]);
+    try {
+      if (!gameOver) {
+        const answer = e.currentTarget.value;
+        const correct = questions[number].correct_answer === answer;
+        if (correct) setScore((prev) => prev + 1);
+        const answerObject = {
+          question: questions[number].question,
+          answer,
+          correct,
+          correctAnswer: questions[number].correct_answer,
+        };
+        setUserAnswers((prev) => [...prev, answerObject]);
+      }
+    } catch (error) {
+      return { message: "there was an error loading this page" };
     }
   };
   const nextQuestion = () => {
@@ -62,6 +83,7 @@ export default function Home() {
       setNumber(nextQuestion);
     }
   };
+
   return (
     <>
       <Head>
@@ -81,7 +103,7 @@ export default function Home() {
         >
           <Typography
             sx={{
-              fontSize: "50px",
+              fontSize: "40px",
               fontWeight: "bold",
               marginBottom: "20px",
               marginTop: "20px",
@@ -89,40 +111,52 @@ export default function Home() {
             }}
             color={
               gameOver || userAnswers.length === TOTAL_QUESTIONS
-                ? "#eee"
-                : "#90EE90"
-            }
-            borderColor={
-              gameOver || userAnswers.length === TOTAL_QUESTIONS
-                ? "#eee"
-                : "#ffffff"
+                ? "#000"
+                : "#544C4A"
             }
           >
             Take QUIZ
           </Typography>
 
           {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
-            <Button
-              color="primary"
-              sx={{
-                background: "#0000FF",
-                width: "100px",
-                "&:hover": {
-                  background: "green",
-                },
-              }}
-              onClick={startTrivia}
-            >
-              Start
-            </Button>
+            <>
+              <Typography
+                sx={{
+                  // fontSize: "40px",
+                  fontWeight: "bold",
+                  marginBottom: "20px",
+                  // marginTop: "20px",
+                  // fontFamily: "Righteous",
+                  color: "#544C4A ",
+                  textAlign: "center",
+                }}
+              >
+                Answer questions carefully before clicking on the 'Next
+                Question', knowingfully you will not be able to go back to
+                previous question a
+              </Typography>
+              <Button
+                color="primary"
+                sx={{
+                  background: "#0000FF",
+                  width: "100px",
+                  "&:hover": {
+                    background: "green",
+                  },
+                }}
+                onClick={startTrivia}
+              >
+                Start
+              </Button>
+            </>
           ) : null}
 
           {loading && (
             <Typography
               sx={{
-                color: "#eee",
+                color: "#ff9191",
                 fontWeight: "bold",
-                fontSize: "50px",
+                fontSize: "20px",
               }}
             >
               Loading...
@@ -130,63 +164,75 @@ export default function Home() {
           )}
 
           {!loading && !gameOver && (
-            <Paper
-              elevation={3}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                textAlign: "center",
-                paddingX: "30px",
-                paddingY: "50px",
-                marginTop: "90px",
-              }}
-            >
-              {!gameOver && userAnswers.length === TOTAL_QUESTIONS ? (
-                <>
-                  <Typography
-                    sx={{
-                      color: "green",
-                      fontSize: "20px",
-                      fontWeight: "bold",
+            <>
+              {/* <Typography
+                sx={{
+                  color: "#eee",
+                  fontWeight: "bold",
+                  fontSize: "30px",
+                }}
+              >
+                Timer: {Timer}
+              </Typography> */}
+              {/* <Timer /> */}
+              <Paper
+                elevation={3}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                  textAlign: "center",
+                  paddingX: "30px",
+                  paddingY: "30px",
+                  marginTop: "50px",
+                }}
+              >
+                {!gameOver && userAnswers.length === TOTAL_QUESTIONS ? (
+                  <>
+                    <Typography
+                      sx={{
+                        color: "green",
+                        fontSize: "20px",
+                        fontWeight: "bold",
 
-                      fontFamily: "Righteous",
-                    }}
-                  >
-                    {score <= 5 ? (
-                      <>
-                        <Typography sx={{ color: "red" }}>Failed!</Typography>
-                        <Typography sx={{ color: "blue" }}>
-                          Score too low
-                        </Typography>
-                      </>
-                    ) : (
-                      "CONGRATULATIONS!!!"
-                    )}
-                  </Typography>
-                  <Typography
-                    sx={{
-                      fontSize: "30px",
-                      fontWeight: "bold",
-                      // color: "#eee",
-                      fontFamily: "Righteous",
-                    }}
-                  >
-                    You score : {score} / 10 questions
-                  </Typography>
-                </>
-              ) : (
-                <QuestionsCard
-                  questionNr={number + 1}
-                  totalQuestions={TOTAL_QUESTIONS}
-                  question={questions[number].question}
-                  answers={questions[number].answers}
-                  userAnswer={userAnswers ? userAnswers[number] : undefined}
-                  callback={checkAnswer}
-                />
-              )}
-            </Paper>
+                        fontFamily: "Righteous",
+                      }}
+                    >
+                      {score <= 5 ? (
+                        <>
+                          <Typography sx={{ color: "red" }}>Failed!</Typography>
+                          <Typography sx={{ color: "blue" }}>
+                            Score too low
+                          </Typography>
+                        </>
+                      ) : (
+                        "CONGRATULATIONS!!!"
+                      )}
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: "30px",
+                        fontWeight: "bold",
+                        // color: "#eee",
+                        fontFamily: "Righteous",
+                      }}
+                    >
+                      You score : {score} / 10 questions
+                    </Typography>
+                  </>
+                ) : (
+                  <QuestionsCard
+                    questionNr={number + 1}
+                    totalQuestions={TOTAL_QUESTIONS}
+                    question={questions[number].question}
+                    answers={questions[number].answers}
+                    userAnswer={userAnswers ? userAnswers[number] : undefined}
+                    callback={checkAnswer}
+                  />
+                )}
+              </Paper>
+            </>
           )}
 
           {!gameOver &&

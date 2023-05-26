@@ -39,18 +39,21 @@ const QuestionsCard: React.FC<Props> = ({
 
     {answers.map((answer) => (
       <Box
-        key={answer}
+        //
         sx={{
           fontWeight: "bold",
           fontFamily: "Righteous",
         }}
-        // correct={userAnswer?.correctAnswer === answer}
-        //   userClicked={userAnswer?.answer === answer}
       >
+        {/* {console.log(userAnswer)} */}
         <Button
           value={answer}
           onClick={callback}
           disabled={!!userAnswer}
+          key={answer}
+          // correct={userAnswer?.correctAnswer === answer}
+          // userClicked={userAnswer?.answer === answer}
+          // {correctAnswer != correct? 'wrong' :'correct '}
           sx={{
             fontWeight: "bold",
             fontFamily: "Righteous",
@@ -60,6 +63,7 @@ const QuestionsCard: React.FC<Props> = ({
             // #87CEEB
             "&:hover": {
               background: " green",
+              color: "#ffffff",
             },
           }}
         >
