@@ -7,8 +7,6 @@ import { theme } from "../styles/themeProvider";
 import QuestionsCard from "@/components/questionsCard";
 import { fetchQuizQuestion } from "@/components/api/api";
 import { QuestionState, Difficulty } from "@/components/api/api";
-import Timer from "@/components/services/timer";
-// import { Difficulty } from "@/components/api/api";
 
 export type AnswerObject = {
   question: string;
@@ -120,21 +118,6 @@ export default function Home(targetDate: string | number | Date) {
 
           {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
             <>
-              <Typography
-                sx={{
-                  // fontSize: "40px",
-                  fontWeight: "bold",
-                  marginBottom: "20px",
-                  // marginTop: "20px",
-                  // fontFamily: "Righteous",
-                  color: "#544C4A ",
-                  textAlign: "center",
-                }}
-              >
-                Answer questions carefully before clicking on the 'Next
-                Question', knowingfully you will not be able to go back to
-                previous question a
-              </Typography>
               <Button
                 color="primary"
                 sx={{
@@ -166,7 +149,7 @@ export default function Home(targetDate: string | number | Date) {
           {!loading && !gameOver && (
             <>
               {/* <Typography
-                sx={{
+                sx={{ 
                   color: "#eee",
                   fontWeight: "bold",
                   fontSize: "30px",
