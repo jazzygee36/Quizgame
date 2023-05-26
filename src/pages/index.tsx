@@ -118,29 +118,26 @@ export default function Home(targetDate: string | number | Date) {
           </Typography>
 
           {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
-            <>
-              {/* Answer questions carefully before going to the 'Next Question', */}
-              <Box
-                sx={{
-                  textAlign: "center",
-                }}
-              >
-                <TakeQuiz />
+            <Box
+              sx={{
+                textAlign: "center",
+              }}
+            >
+              <TakeQuiz />
 
-                <Button
-                  color="primary"
-                  sx={{
-                    background: "#0000FF",
-                    "&:hover": {
-                      background: "green",
-                    },
-                  }}
-                  onClick={startTrivia}
-                >
-                  {gameOver ? "Start" : "Start Again"}
-                </Button>
-              </Box>
-            </>
+              <Button
+                color="primary"
+                sx={{
+                  background: "#0000FF",
+                  "&:hover": {
+                    background: "green",
+                  },
+                }}
+                onClick={startTrivia}
+              >
+                {gameOver ? "Start" : "Start Again"}
+              </Button>
+            </Box>
           ) : null}
 
           {loading && (

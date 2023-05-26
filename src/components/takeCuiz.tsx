@@ -12,7 +12,8 @@ export default function TakeQuiz() {
         textAlign: "center",
       }}
     >
-      Answer questions carefully
+      Answer questions carefully before moving to the next question,
+      knowingfully that you cant go back to the previous question.
     </Typography>
   );
 }
